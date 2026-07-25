@@ -162,9 +162,7 @@ describe("useAsyncChunk (vue) — fetchOnMount", () => {
 
     await vi.waitFor(() => expect(fetchCount).toBe(1));
 
-    const { unmount } = withSetup(() =>
-      useAsyncChunk(userChunk, { fetchOnMount: true })
-    );
+    const { unmount } = withSetup(() => useAsyncChunk(userChunk, { fetchOnMount: true }));
 
     await vi.waitFor(() => expect(fetchCount).toBe(2));
 
@@ -182,7 +180,7 @@ describe("useAsyncChunk (vue) — enabled & params", () => {
 
     const enabled = ref(false);
     const { result, unmount } = withSetup(() =>
-      useAsyncChunk(userChunk, { params: { id: 1 }, enabled })
+      useAsyncChunk(userChunk, { params: { id: 1 }, enabled }),
     );
 
     await delay(20);
@@ -208,7 +206,7 @@ describe("useAsyncChunk (vue) — enabled & params", () => {
 
     const enabled = ref(true);
     const { result, unmount } = withSetup(() =>
-      useAsyncChunk(userChunk, { params: { id: 1 }, enabled })
+      useAsyncChunk(userChunk, { params: { id: 1 }, enabled }),
     );
 
     await vi.waitFor(() => expect(result.loading.value).toBe(true));
@@ -233,7 +231,7 @@ describe("useAsyncChunk (vue) — enabled & params", () => {
 
     const id = ref(1);
     const { result, unmount } = withSetup(() =>
-      useAsyncChunk(userChunk, { params: () => ({ id: id.value }) })
+      useAsyncChunk(userChunk, { params: () => ({ id: id.value }) }),
     );
 
     await vi.waitFor(() => expect(result.data.value).toBe("user-1"));
@@ -259,7 +257,7 @@ describe("useAsyncChunk (vue) — enabled & params", () => {
     const enabled = ref(false);
     const id = ref(1);
     const { result, unmount } = withSetup(() =>
-      useAsyncChunk(userChunk, { params: () => ({ id: id.value }), enabled })
+      useAsyncChunk(userChunk, { params: () => ({ id: id.value }), enabled }),
     );
 
     await delay(20);
@@ -303,7 +301,7 @@ describe("useAsyncChunk (vue) — pagination", () => {
         data: [`page-${page}`],
         hasMore: true,
       }),
-      { pagination: { pageSize: 10, mode: "replace" } }
+      { pagination: { pageSize: 10, mode: "replace" } },
     );
 
     const { result, unmount } = withSetup(() => useAsyncChunk(pages));
@@ -338,7 +336,11 @@ describe("useAsyncChunk (vue) — scoped resolution", () => {
       const { data, pagination, nextPage } = useAsyncChunk(props.chunk as any) as any;
       return () =>
         h("div", [
-          h("span", { "data-testid": `${props.label}-page` }, String(pagination?.value?.page ?? "n/a")),
+          h(
+            "span",
+            { "data-testid": `${props.label}-page` },
+            String(pagination?.value?.page ?? "n/a"),
+          ),
           h("span", { "data-testid": `${props.label}-data` }, JSON.stringify(data.value)),
           h("button", { "data-testid": `${props.label}-next`, onClick: () => nextPage() }, "next"),
         ]);
@@ -354,16 +356,17 @@ describe("useAsyncChunk (vue) — scoped resolution", () => {
       {
         pagination: { pageSize: 10, mode: "replace" },
         scoped: true,
-      } as any
+      } as any,
     );
 
     render(
-      defineComponent(() => () =>
-        h("div", [
-          h(TestConsumer, { chunk: sharedExport, label: "a" }),
-          h(TestConsumer, { chunk: sharedExport, label: "b" }),
-        ])
-      )
+      defineComponent(
+        () => () =>
+          h("div", [
+            h(TestConsumer, { chunk: sharedExport, label: "a" }),
+            h(TestConsumer, { chunk: sharedExport, label: "b" }),
+          ]),
+      ),
     );
 
     await waitFor(() => {
@@ -388,16 +391,17 @@ describe("useAsyncChunk (vue) — scoped resolution", () => {
         data: [`page-${page}`],
         hasMore: true,
       }),
-      { pagination: { pageSize: 10, mode: "replace" } }
+      { pagination: { pageSize: 10, mode: "replace" } },
     );
 
     render(
-      defineComponent(() => () =>
-        h("div", [
-          h(TestConsumer, { chunk: sharedExport, label: "a" }),
-          h(TestConsumer, { chunk: sharedExport, label: "b" }),
-        ])
-      )
+      defineComponent(
+        () => () =>
+          h("div", [
+            h(TestConsumer, { chunk: sharedExport, label: "a" }),
+            h(TestConsumer, { chunk: sharedExport, label: "b" }),
+          ]),
+      ),
     );
 
     await waitFor(() => {
